@@ -1,7 +1,21 @@
 
 
 class Expression(object):
-    pass
+    """Interface"""
+
+    def reduce(self, to: str) -> 'Money':
+        raise NotImplementedError('Need to implement in concrete class')
+
+
+class Sum(Expression):
+
+    def __init__(self, augend: 'Money', addend: 'Money'):
+        self.augend = augend
+        self.addend = addend
+
+    def reduce(self, to: str) -> 'Money':
+        amount = self.augend.amount + self.addend.amount
+        return Money(amount, to)
 
 
 class Money(Expression):
@@ -19,7 +33,10 @@ class Money(Expression):
         return Money(self.amount * multiplier, self.currency)
 
     def plus(self, addend: 'Money') -> 'Expression':
-        return Money(self.amount + addend.amount, self.currency)
+        return Sum(self, addend)
+
+    def reduce(self, to: str) -> 'Money':
+        return self
 
     @staticmethod
     def dollar(amount: int) -> 'Money':
@@ -33,4 +50,4 @@ class Money(Expression):
 class Bank(object):
 
     def reduce(self, source: Expression, to: str) -> Money:
-        return Money.dollar(10)
+        return source.reduce(to)

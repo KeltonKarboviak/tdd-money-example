@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from money.money import Expression, Money, Bank
+from money.money import Expression, Money, Bank, Sum
 
 
 class MoneyTest(TestCase):
@@ -34,3 +34,36 @@ class MoneyTest(TestCase):
 
         # assert
         self.assertEqual(Money.dollar(10), reduced)
+
+    def test_plus_returns_sum(self):
+        # arrange
+        five = Money.dollar(5)
+
+        # act
+        result = five.plus(five)
+        sum = result
+
+        # assert
+        self.assertEqual(five, sum.augend)
+        self.assertEqual(five, sum.addend)
+
+    def test_reduce_sum(self):
+        # arrange
+        sum = Sum(Money.dollar(3), Money.dollar(4))
+        bank = Bank()
+
+        # act
+        result = bank.reduce(sum, 'USD')
+
+        # assert
+        self.assertEqual(Money.dollar(7), result)
+
+    def test_reduce_money(self):
+        # arrange
+        bank = Bank()
+
+        # act
+        result = bank.reduce(Money.dollar(1), 'USD')
+
+        # assert
+        self.assertEqual(Money.dollar(1), result)
