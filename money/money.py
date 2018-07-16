@@ -9,10 +9,10 @@ class Money(object):
     def __eq__(self, other: 'Money') -> bool:
         return (
             self.amount == other.amount
-            and self.__class__ == other.__class__)
+            and self.currency == other.currency)
 
-    def times(self, multiplier: int) -> int:
-        raise NotImplementedError('Need to implement in concrete class.')
+    def times(self, multiplier: int) -> 'Money':
+        return Money(self.amount * multiplier, self.currency)
 
     @staticmethod
     def dollar(amount: int) -> 'Dollar':
@@ -20,7 +20,7 @@ class Money(object):
 
     @staticmethod
     def franc(amount: int) -> 'Franc':
-        return Franc(amount, None)
+        return Franc(amount, 'CHF')
 
 
 class Dollar(Money):
@@ -28,14 +28,8 @@ class Dollar(Money):
     def __init__(self, amount: int, currency: str):
         super(Dollar, self).__init__(amount, currency)
 
-    def times(self, multiplier: int) -> int:
-        return Money.dollar(self.amount * multiplier)
-
 
 class Franc(Money):
 
     def __init__(self, amount: int, currency: str):
         super(Franc, self).__init__(amount, currency)
-
-    def times(self, multiplier: int) -> int:
-        return Money.franc(self.amount * multiplier)
