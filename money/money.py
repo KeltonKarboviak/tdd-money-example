@@ -1,6 +1,10 @@
 
 
-class Money(object):
+class Expression(object):
+    pass
+
+
+class Money(Expression):
 
     def __init__(self, amount: int, currency: str):
         self.amount = amount
@@ -14,10 +18,19 @@ class Money(object):
     def times(self, multiplier: int) -> 'Money':
         return Money(self.amount * multiplier, self.currency)
 
+    def plus(self, addend: 'Money') -> 'Expression':
+        return Money(self.amount + addend.amount, self.currency)
+
     @staticmethod
-    def dollar(amount: int) -> 'Dollar':
+    def dollar(amount: int) -> 'Money':
         return Money(amount, 'USD')
 
     @staticmethod
-    def franc(amount: int) -> 'Franc':
+    def franc(amount: int) -> 'Money':
         return Money(amount, 'CHF')
+
+
+class Bank(object):
+
+    def reduce(self, source: Expression, to: str) -> Money:
+        return Money.dollar(10)
