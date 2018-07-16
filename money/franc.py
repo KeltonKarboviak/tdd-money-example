@@ -1,11 +1,10 @@
+from .money import Money
 
-class Franc(object):
+
+class Franc(Money):
 
     def __init__(self, amount):
-        self.amount = amount
-
-    def __eq__(self, other):
-        return self.amount == other.amount
+        super(Franc, self).__init__(amount)
 
     def times(self, multiplier):
         return Franc(self.amount * multiplier)
