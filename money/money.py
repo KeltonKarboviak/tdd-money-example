@@ -3,18 +3,28 @@
 class Expression(object):
     """Interface"""
 
+    def plus(self, addend: 'Expression') -> 'Expression':
+        raise NotImplementedError('Need to implement in concrete class')
+
     def reduce(self, bank: 'Bank', to: str) -> 'Money':
         raise NotImplementedError('Need to implement in concrete class')
 
 
 class Sum(Expression):
 
-    def __init__(self, augend: 'Money', addend: 'Money'):
+    def __init__(self, augend: 'Expression', addend: 'Expression'):
         self.augend = augend
         self.addend = addend
 
+    def times(self, multiplier: int) -> 'Expression':
+        return Sum(self.augend.times(multiplier), self.addend.times(multiplier))
+
+    def plus(self, addend: 'Expression') -> 'Expression':
+        return Sum(self, addend)
+
     def reduce(self, bank: 'Bank', to: str) -> 'Money':
-        amount = self.augend.amount + self.addend.amount
+        amount = self.augend.reduce(bank, to).amount \
+            + self.addend.reduce(bank, to).amount
         return Money(amount, to)
 
 
@@ -24,15 +34,22 @@ class Money(Expression):
         self.amount = amount
         self.currency = currency
 
+    def __str__(self):
+        return f'<Money(amount={self.amount}, ' \
+            f'currency={self.currency})>'
+
+    def __repr__(self):
+        return str(self)
+
     def __eq__(self, other: 'Money') -> bool:
         return (
             self.amount == other.amount
             and self.currency == other.currency)
 
-    def times(self, multiplier: int) -> 'Money':
+    def times(self, multiplier: int) -> 'Expression':
         return Money(self.amount * multiplier, self.currency)
 
-    def plus(self, addend: 'Money') -> 'Expression':
+    def plus(self, addend: 'Expression') -> 'Expression':
         return Sum(self, addend)
 
     def reduce(self, bank: 'Bank', to: str) -> 'Money':
