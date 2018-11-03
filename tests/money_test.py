@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from money.money import Expression, Money, Bank, Sum
+from money.money import Money, Bank, Sum
 
 
 class MoneyTest(TestCase):
